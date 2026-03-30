@@ -1,4 +1,5 @@
 #include "GraphicsLib.h"
+#include "Shape.h"
 
 // wWinMain is essentially window's version of int main()
 // _In_ means windows will pass information IN here, whereas _In_opt is optional
@@ -18,8 +19,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrev, _In_ PWS
         // Clearing screen
         ClearScreen(COLOR_DARKGRAY);
 
-        // Test square
-        Square(100, 100, 200, COLOR_RED);
+        // Test square 
+        Square Cube(100, 100, 200, COLOR_RED);
+
+        Cube.Draw();
 
         // Drawing code --END--
 

@@ -126,6 +126,8 @@
   <ItemGroup>
     <ClCompile Include="GraphicsLib.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="Shape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsLib.h" />

@@ -112,15 +112,3 @@ void PutPixel(int x, int y, uint32_t color)
         g_buffer.pixels[y * g_buffer.width + x] = color; // 1D memory address we access skipping the width amount of pixels to get the correct height, giving us (y * width + x).
     }
 }
-
-void Square(int x_shape_pos, int y_shape_pos, int size, uint32_t color)
-{
-    // y_size or x_size is the local space whereas x_shape_pos or y_shape_pos is the world transform, moving it from local space to world space.
-    for (int y_size = 0 ; y_size < size; y_size++)
-    {
-        for (int x_size = 0; x_size < size; x_size++)
-        {
-            PutPixel(x_shape_pos + x_size, y_shape_pos + y_size, color);
-        }
-    }
-}

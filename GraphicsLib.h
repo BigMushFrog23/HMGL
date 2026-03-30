@@ -27,9 +27,6 @@ extern GraphicsBuffer g_buffer;
 void ClearScreen(uint32_t color);
 void PutPixel(int x, int y, uint32_t color);
 
-// Shape function declarations
-void Square(int x, int y, int size, uint32_t color);
-
 // WINDOW API
 bool OpenWindow(const wchar_t* title, int width, int height);
 bool IsWindowRunning();
