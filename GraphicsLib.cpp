@@ -1,4 +1,6 @@
 #include "GraphicsLib.h"
+#include <string>
+#include <algorithm>
 
 GraphicsBuffer g_buffer;
 
@@ -30,6 +32,7 @@ bool OpenWindow(const wchar_t* title, int width, int height)
     wc.lpfnWndProc = WindowProc; // we link the event listener function to the blueprint.
     wc.hInstance = hInstance;
     wc.lpszClassName = L"HomeMadeGraphicsLibrary";
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW); // initialize windows cursor in case.
     RegisterClass(&wc); // we hand the blueprint over to the windows OS so it remembers it.
 
     // we ask for a drawing area, windows calculates how big the entire window needs to be to fit the drawing area perfectly.
@@ -52,10 +55,10 @@ bool OpenWindow(const wchar_t* title, int width, int height)
     g_buffer.pixels = (uint32_t*)VirtualAlloc(0, g_buffer.width * g_buffer.height * sizeof(uint32_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     // setup BITMAPINFO for StretchDIBits
-    // we essentially tell the RAM that we just allocated a 32 bit-image, and the negative height means coordiante (0,0) is at the top-left of the screen.
+    // we essentially tell the RAM that we just allocated a 32 bit-image.
     g_buffer.bitmap_info.bmiHeader.biSize = sizeof(g_buffer.bitmap_info.bmiHeader);
     g_buffer.bitmap_info.bmiHeader.biWidth = g_buffer.width;
-    g_buffer.bitmap_info.bmiHeader.biHeight = -g_buffer.height; // top-down
+    g_buffer.bitmap_info.bmiHeader.biHeight = -g_buffer.height; // the negative height means coordinate (0,0) is at the top-left of the screen
     g_buffer.bitmap_info.bmiHeader.biPlanes = 1;
     g_buffer.bitmap_info.bmiHeader.biBitCount = 32;
     g_buffer.bitmap_info.bmiHeader.biCompression = BI_RGB;
@@ -64,6 +67,19 @@ bool OpenWindow(const wchar_t* title, int width, int height)
     g_running = true;
 
     return true;
+}
+
+void DisplayFPS(int fps)
+{
+    static int lastFPS = -1;
+
+    // only update if the FPS has actually changed
+    if (fps != lastFPS && g_hwnd != NULL)
+    {
+        lastFPS = fps;
+        std::wstring title = L"HMGL Engine | FPS: " + std::to_wstring(fps);
+        SetWindowTextW(g_hwnd, title.c_str());
+    }
 }
 
 bool IsWindowRunning() {
@@ -94,15 +110,11 @@ void CloseWindow()
     DestroyWindow(g_hwnd);
 }
 
-// drawing function
-
 void ClearScreen(uint32_t color)
 {
-    uint32_t* pixel = g_buffer.pixels;
-    for (int i = 0; i < g_buffer.width * g_buffer.height; ++i) // while we haven't traversed the window, add +1 to position.
-    {
-        *pixel++ = color; // slide along the memory instead of recalculating position everytime with pixels[i].
-    }
+    int totalPixels = g_buffer.width * g_buffer.height;
+
+    std::fill(g_buffer.pixels, g_buffer.pixels + totalPixels, color); // clear memory at high bandwith
 }
 
 void PutPixel(int x, int y, uint32_t color)

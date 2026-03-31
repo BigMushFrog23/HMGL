@@ -2,12 +2,72 @@
 #include <Windows.h>
 #include <stdint.h>
 
+// hardware abstraction layer
+// talk to windows so the rest of the engine doesn't have to.
+
+class Timer
+{
+private:
+    int64_t m_frequency;
+    int64_t m_lastTime;
+
+    // FPS timer
+    float m_fpsTimer = 0.0f;
+    int m_frameCount = 0;
+    int m_currentFPS = 0;
+
+public:
+    Timer()
+    {
+        // get CPU's last time frequency
+        LARGE_INTEGER freq;
+        QueryPerformanceFrequency(&freq);
+        m_frequency = freq.QuadPart;
+
+        // initialize the first tick
+        LARGE_INTEGER start;
+        QueryPerformanceCounter(&start); // Measures CPU cycles instead of GetTickCount. (dt = ticks passed / frequency)
+        m_lastTime = start.QuadPart;
+    }
+
+    float GetDeltaTime()
+    {
+        LARGE_INTEGER currentTime;
+        QueryPerformanceCounter(&currentTime);
+
+        // calculate how many ticks passed since the last call
+        int64_t timePassed = currentTime.QuadPart - m_lastTime;
+
+        // update m_lastTime for the NEXT frame
+        m_lastTime = currentTime.QuadPart;
+
+        // convert ticks to seconds (float)
+        float dt = (float)timePassed / (float)m_frequency;
+
+        // get FPS
+        m_fpsTimer += dt;
+        m_frameCount++;
+
+        if (m_fpsTimer >= 0.5f) // update every half second
+        {
+            m_currentFPS = (int)(m_frameCount / m_fpsTimer);
+            m_fpsTimer = 0.0f;
+            m_frameCount = 0;
+        }
+
+        return dt;
+    }
+
+    int GetFPS() const { return m_currentFPS; }
+};
+
 // Colors
 
-const uint32_t COLOR_DARKGRAY = 0x111111;
-const uint32_t COLOR_RED = 0xFF0000;
-const uint32_t COLOR_GREEN = 0x00FF00;
-const uint32_t COLOR_BLUE = 0x0000FF;
+const uint32_t COLOR_DARKGRAY = 0xFF111111;
+const uint32_t COLOR_RED = 0xFFFF0000;
+const uint32_t COLOR_GREEN = 0xFF00FF00;
+const uint32_t COLOR_BLUE = 0xFF0000FF;
+const uint32_t COLOR_TRANSPARENT = 0x00000000;
 
 // struct defaults to public whereas class defaults to private.
 // a buffer is a big chunk of memory essentially.
@@ -32,3 +92,6 @@ bool OpenWindow(const wchar_t* title, int width, int height);
 bool IsWindowRunning();
 void UpdateWindow();
 void CloseWindow();
+
+// FPS
+void DisplayFPS(int fps);
