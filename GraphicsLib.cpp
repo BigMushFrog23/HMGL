@@ -1,6 +1,6 @@
 #include "GraphicsLib.h"
 #include <string>
-#include <algorithm>
+#include <cstdlib> // used for malloc/free
 
 GraphicsBuffer g_buffer;
 
@@ -51,8 +51,13 @@ bool OpenWindow(const wchar_t* title, int width, int height)
     g_buffer.width = width;
     g_buffer.height = height;
 
-    // we ask the OS for Ram, allocating the memory needed for every pixel.
-    g_buffer.pixels = (uint32_t*)VirtualAlloc(0, g_buffer.width * g_buffer.height * sizeof(uint32_t), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    size_t pixelsSizeInBytes = g_buffer.width * g_buffer.height * sizeof(uint32_t); // get amount of pixels, then multiply by the size of a 32-bit integer ( 4 bytes ) and get the total pixels converted to bytes.
+    g_buffer.pixels = (uint32_t*)malloc(pixelsSizeInBytes); // translate memory into raw numbers (uint32_t*) and allocate the amount needed for the pixels.
+
+    if (g_buffer.pixels == NULL)
+    {
+        return false; // don't run this if we can't get memory.
+    }
 
     // setup BITMAPINFO for StretchDIBits
     // we essentially tell the RAM that we just allocated a 32 bit-image.
@@ -78,7 +83,7 @@ void DisplayFPS(int fps)
     {
         lastFPS = fps;
         std::wstring title = L"HMGL Engine | FPS: " + std::to_wstring(fps);
-        SetWindowTextW(g_hwnd, title.c_str());
+        SetWindowTextW(g_hwnd, title.c_str()); // we use .c_str() to translate the wstring to a c_str, since the windows api was written before wstring existed, it doesn't know what it is.
     }
 }
 
@@ -105,22 +110,27 @@ void UpdateWindow()
 // we do this to not cause a memory leak.
 void CloseWindow()
 {
-    VirtualFree(g_buffer.pixels, 0, MEM_RELEASE); 
+    free(g_buffer.pixels);
     ReleaseDC(g_hwnd, g_hdc);
     DestroyWindow(g_hwnd);
 }
 
+// we get the total pixels, then go through each one, and set it to the color (black)
+// fast, but can probably be optimized further (to look at)
 void ClearScreen(uint32_t color)
 {
     int totalPixels = g_buffer.width * g_buffer.height;
 
-    std::fill(g_buffer.pixels, g_buffer.pixels + totalPixels, color); // clear memory at high bandwith
+    for (int i = 0; i < totalPixels; ++i)
+    {
+        g_buffer.pixels[i] = color;
+    }
 }
 
 void PutPixel(int x, int y, uint32_t color)
 {
     if (x >= 0 && x < g_buffer.width && y >= 0 && y < g_buffer.height) // check if we are inside the window / grid of pixels.
     {
-        g_buffer.pixels[y * g_buffer.width + x] = color; // 1D memory address we access skipping the width amount of pixels to get the correct height, giving us (y * width + x).
+        g_buffer.pixels[y * g_buffer.width + x] = color; // act as if the 2D arrayis a 1D array, allowing prefetch and batches.
     }
 }

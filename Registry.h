@@ -1,5 +1,5 @@
 #pragma once
-#include <vector> // ensures cache-locality, allows the CPU to pre-fetch components (they are in a straight line in memory).
+#include <vector> // using vector so that we can allow the CPU to pre-fetch memory elements, ensuring cache/data locality.
 #include "Components.h"
 
 // Database file
@@ -26,7 +26,7 @@ public:
 	{
 		Entity id = m_nextEntityId++;
 
-		// dynamic resizing to keep all parallel arrays in sync, and make sure they have enough slots.
+		// dynamic resizing to keep all these arrays in sync, and make sure they have enough slots for the created entity.
 		size_t newSize = (size_t)id + 1;
 		transforms.resize(newSize);
 		sprites.resize(newSize);
@@ -41,6 +41,9 @@ public:
 		return id;
 	}
 
-	size_t GetEntityCount() const { return transforms.size(); }
+	size_t GetEntityCount() const 
+	{ 
+		return transforms.size(); 
+	}
 
 };

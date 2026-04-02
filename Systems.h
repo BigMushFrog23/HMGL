@@ -6,16 +6,16 @@
 
 namespace EngineSystems
 {
-    // instead of a Draw() for each individual entity, we render everything at once.
+    // instead of using a draw function for each individual entity, we render everything at once to speed up the process.
     inline void Render(Registry& registry)
     {
         // loop through the slots in the vectors
         for (Entity i = 0; i < (Entity)registry.GetEntityCount(); i++)
         {
-            // only draw if this entity has BOTH a position and an image
+            // only draw if the entity at index 'i' has a position AND an image.
             if (registry.hasTransform[i] && registry.hasSprite[i])
             {
-                // returns a Reference to the struct
+                // we return a referance to the struct
                 TransformComponent& transform = registry.transforms[i];
                 SpriteComponent& sprite = registry.sprites[i];
 

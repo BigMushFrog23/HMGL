@@ -9,6 +9,7 @@
 
 // wWinMain is essentially window's version of int main()
 // _In_ means windows will pass information IN here, whereas _In_opt is optional
+// Using _In_ or _In_opt_ is optional, just used to be very precise and make the IDE not put a warning.
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrev, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
     OpenWindow(L"Game Engine Test", 1280, 720);
@@ -22,7 +23,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrev, _In_ PWS
     assets.CreateColorSquare("HeroTex", 50, COLOR_RED);
 
     // create an entity
-    // we assign the values needed between: position, sprite, kinematic values, and controller id. Then build it.
+    // we assign the values needed to this new entity between: position, sprite, kinematic values, and controller id. Then build it.
     Entity player = EntityBuilder(registry, assets)
         .WithTransform(100.0f, 100.0f)
         .WithSprite("HeroTex")
