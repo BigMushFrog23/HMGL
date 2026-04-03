@@ -78,7 +78,7 @@ void DisplayFPS(int fps)
 {
     static int lastFPS = -1;
 
-    // only update if the FPS has actually changed
+    // only update if the FPS has actually changed and our window exists
     if (fps != lastFPS && g_hwnd != NULL)
     {
         lastFPS = fps;
@@ -131,6 +131,6 @@ void PutPixel(int x, int y, uint32_t color)
 {
     if (x >= 0 && x < g_buffer.width && y >= 0 && y < g_buffer.height) // check if we are inside the window / grid of pixels.
     {
-        g_buffer.pixels[y * g_buffer.width + x] = color; // act as if the 2D arrayis a 1D array, allowing prefetch and batches.
+        g_buffer.pixels[y * g_buffer.width + x] = color; // act as if the 2D array is a 1D array, allowing prefetch and batches.
     }
 }
