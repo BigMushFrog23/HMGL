@@ -15,12 +15,14 @@ public:
 	std::vector<SpriteComponent>	 sprites;
 	std::vector<KinematicComponent>  kinematics;
 	std::vector<ControllerComponent> controllers;
+	std::vector<CollisionComponent> collisions;
 
 	// check if entity owns a specific piece of data without searching a map.
 	std::vector<bool> hasTransform;
 	std::vector<bool> hasSprite;
 	std::vector<bool> hasKinematic;
 	std::vector<bool> hasController;
+	std::vector<bool> hasCollision;
 
 	Entity CreateEntity()
 	{
@@ -32,11 +34,13 @@ public:
 		sprites.resize(newSize);
 		kinematics.resize(newSize);
 		controllers.resize(newSize);
+		collisions.resize(newSize);
 
 		hasTransform.resize(newSize, false);
 		hasSprite.resize(newSize, false);
 		hasKinematic.resize(newSize, false);
 		hasController.resize(newSize, false);
+		hasCollision.resize(newSize, false);
 
 		return id;
 	}

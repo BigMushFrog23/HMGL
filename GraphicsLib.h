@@ -66,6 +66,7 @@ public:
 const uint32_t COLOR_DARKGRAY = 0xFF111111;
 const uint32_t COLOR_RED = 0xFFFF0000;
 const uint32_t COLOR_GREEN = 0xFF00FF00;
+const uint32_t COLOR_YELLOW = 0xFFFFFF00;
 const uint32_t COLOR_BLUE = 0xFF0000FF;
 const uint32_t COLOR_TRANSPARENT = 0x00000000;
 
